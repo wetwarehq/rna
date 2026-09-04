@@ -43,10 +43,10 @@ class SlotStampTests(unittest.TestCase):
         self.assertEqual(card["slots"]["cds"]["seq"], before)
         self.assertNotIn("seq", card["stamps"]["cds"])
 
-    def test_no_orf_annotator_on_blob(self):
+    def test_no_orf_search_on_polymer(self):
         card = verify({"sequence": UTR5 + CDS, "rna_class": "mRNA"})
         self.assertEqual(card["slots"]["cds"]["seq"], "")
-        self.assertIn("Legacy blob", " ".join(card["stamps"]["notes"]))
+        self.assertIn("Slots were empty", " ".join(card["stamps"]["notes"]))
         self.assertNotEqual(card["stamps"]["reduction"], "match")
 
     def test_premature_stop_fails(self):
@@ -110,7 +110,7 @@ class SlotStampTests(unittest.TestCase):
 
     def test_fasta_and_dna_blob(self):
         card = verify(">mini\nATG GCC TAA\n")
-        self.assertIn("Legacy blob", " ".join(card["stamps"]["notes"]))
+        self.assertIn("Slots were empty", " ".join(card["stamps"]["notes"]))
         self.assertIn("T residue", " ".join(card["stamps"]["notes"]))
 
 

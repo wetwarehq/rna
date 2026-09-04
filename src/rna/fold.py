@@ -1,4 +1,4 @@
-"""Approximate RNA structure recorders. Not a Turner nearest-neighbour MFE."""
+"""Approximate RNA secondary structure. Not a Turner nearest-neighbour MFE."""
 
 from __future__ import annotations
 

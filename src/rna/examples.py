@@ -50,7 +50,7 @@ EXAMPLES = {
         "rna_class": "ncRNA",
         "host": "Saccharomyces cerevisiae",
         "product": "tRNA-Phe",
-        "purpose": "Classic cloverleaf ncRNA. Recorders only; ORF checkers skipped.",
+        "purpose": "Yeast tRNA-Phe. Composition and fold are measured; CDS grammar is not applied.",
         "modifications": [],
         "sequence": NCRNA_TRNA,
         "whitelist": [],

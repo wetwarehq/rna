@@ -1,4 +1,4 @@
-"""Sequence normalisation. Never used as an annotator."""
+"""Sequence normalisation. T is transcribed to U. This is not an ORF search."""
 
 from __future__ import annotations
 

@@ -31,11 +31,11 @@ def _load(path: str | None, sequence: str | None, rna_class: str) -> dict:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="rn01",
-        description="Stamp a synthetic RNA card. Agent fills slots.seq; stamps do not overwrite them.",
+        description="Evaluate a synthetic RNA card. slots.*.seq is stored as submitted.",
     )
     parser.add_argument("command", nargs="?", default="verify", help="verify (default)")
     parser.add_argument("path", nargs="?", help="JSON card, FASTA, or raw sequence. '-' reads stdin.")
-    parser.add_argument("--sequence", "-s", help="Raw sequence (legacy blob).")
+    parser.add_argument("--sequence", "-s", help="Raw sequence when slots are empty.")
     parser.add_argument("--class", dest="rna_class", default="mRNA", help="RNA class (default mRNA).")
     parser.add_argument("--version", action="version", version=f"rna {VERSION}")
     args = parser.parse_args(argv)

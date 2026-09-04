@@ -1,7 +1,7 @@
 [project]
 name = "rna"
 version = "0.2.0"
-description = "Slot-and-stamp verifier for synthetic RNA. Identity against packaged auth.seq."
+description = "Identity and open-reading-frame grammar for synthetic RNA."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"

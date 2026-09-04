@@ -36,8 +36,8 @@ def _alphabet(seq: str) -> list[dict]:
     return [check("alphabet", "Alphabet", "pass", "A/U/G/C.")]
 
 
-def fail_closed_slot(name: str, rna: str) -> list[dict]:
-    """Gating rules for one slot. No fold, no CAI, no whitelist."""
+def slot_grammar(name: str, rna: str) -> list[dict]:
+    """Required grammar for one slot. No fold, no CAI, no motif lists."""
     if not rna:
         return [check("empty", "Empty slot", "skip", "No sequence in this slot.")]
     out = _alphabet(rna)
@@ -127,12 +127,12 @@ def _utr_cryptic(name: str, rna: str) -> list[dict]:
 
 
 def slot_reduction(claimed: bool, identity: bool, checkers: list[dict]) -> str:
-    gating_fail = any(c["status"] == "fail" for c in checkers)
+    any_fail = any(c["status"] == "fail" for c in checkers)
     if claimed:
-        if identity and not gating_fail:
+        if identity and not any_fail:
             return "match"
         return "fail"
-    if gating_fail:
+    if any_fail:
         return "fail"
     return "cleared"
 
@@ -142,7 +142,7 @@ def stamp_slot(name: str, raw_seq: str, auth: dict[str, str] | None, claimed: bo
     identity = False
     if claimed and auth is not None and name in auth:
         identity = rna == auth[name]
-    checkers = fail_closed_slot(name, rna)
+    checkers = slot_grammar(name, rna)
     if claimed and auth is None:
         checkers.append(
             check(

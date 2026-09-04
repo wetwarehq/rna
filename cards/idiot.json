@@ -6,7 +6,7 @@
     "host": "Homo sapiens",
     "product": "MASKGEELFTGVVPILVELDGD",
     "modifications": ["m1Psi", "m7G-cap1"],
-    "purpose": "Label A, 5′ UTR is B. Kozak still GCCACCAUG. Substring whitelist would pass; identity must not."
+    "purpose": "Claims cassette A. The 5′ UTR is a different polymer. Kozak GCCACCAUG is still present."
   },
   "slots": {
     "5_utr": {

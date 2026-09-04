@@ -1,4 +1,4 @@
-"""Card pipeline: agent fills slots.seq; stamps are written beside them."""
+"""Evaluate a card. slots.*.seq is stored as submitted; stamps are written beside it."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from .stamps import cds_translation, polymer_from_slots, stamp_slot
 VERSION = "0.2.0"
 SCHEMA = "rna.card.v1"
 
-STRUCTURE_CHECKER_IDS = frozenset({"inverted_repeat", "five_prime_structure"})
+STRUCTURE_IDS = frozenset({"inverted_repeat", "five_prime_structure"})
 
 
 def utcnow() -> str:
@@ -79,7 +79,7 @@ def _read_slots(payload: dict, src: dict) -> tuple[dict, list[str], str]:
     blob = src.get("sequence") or src.get("seq") or payload.get("sequence") or ""
     if not blob:
         return slots, notes, ""
-    notes.append("Legacy blob fallback. Slots were not filled; CDS is not inferred.")
+    notes.append("Slots were empty. A raw polymer was used. CDS is not inferred.")
     rna, n2, _ = normalize(blob)
     notes.extend(n2)
     cds_start = src.get("cds_start")
@@ -97,7 +97,7 @@ def _read_slots(payload: dict, src: dict) -> tuple[dict, list[str], str]:
             slots["cds"] = {"seq": rna[a:b]}
             slots["3_utr"] = {"seq": rna[b:body_end]}
             slots["polya"] = {"seq": rna[body_end:]}
-            notes.append("Blob sliced with agent-supplied CDS bounds. No ORF search.")
+            notes.append("Polymer sliced with caller-supplied CDS bounds. No ORF search.")
             return slots, notes, polymer_from_slots(slots)
     return slots, notes, rna
 
@@ -153,15 +153,15 @@ def verify(payload: dict | str) -> dict:
         heuristics = [
             c
             for c in raw_checks
-            if c["id"] not in STRUCTURE_CHECKER_IDS and c["status"] in {"warn", "info"}
+            if c["id"] not in STRUCTURE_IDS and c["status"] in {"warn", "info"}
         ]
     elif not coding:
         heuristics.append(
             {
                 "id": "coding_rules",
-                "title": "Coding-RNA checkers",
+                "title": "CDS grammar",
                 "status": "skip",
-                "detail": f"rna_class={agent['rna_class']}. ORF grammar applies to mRNA/cRNA CDS slots.",
+                "detail": f"rna_class={agent['rna_class']}. Open-reading-frame grammar applies to mRNA.",
                 "evidence": "",
             }
         )

@@ -1,4 +1,4 @@
-"""Molecular biology checkers, composition/structure recorders, and motif lists."""
+"""ORF grammar, composition, structure, and motif lists."""
 
 from __future__ import annotations
 
@@ -59,7 +59,7 @@ DEFAULT_BLACKLIST = [
     },
 ]
 
-CODING_CLASSES = frozenset({"mRNA", "cRNA", "coding"})
+CODING_CLASSES = frozenset({"mRNA", "coding"})
 
 
 def is_coding(rna_class: str) -> bool:
@@ -149,13 +149,13 @@ def run_lists(seq: str, raw: str, whitelist: list[str], blacklist: list[dict], u
     motifs = list(DEFAULT_BLACKLIST) if use_default else []
     for item in blacklist:
         if isinstance(item, str):
-            motifs.append({"id": item, "motif": item, "reason": "Agent blacklist."})
+            motifs.append({"id": item, "motif": item, "reason": "Submitted forbidden motif."})
         elif isinstance(item, dict) and item.get("motif"):
             motifs.append(
                 {
                     "id": item.get("id") or item["motif"],
                     "motif": item["motif"],
-                    "reason": item.get("reason") or "Agent blacklist.",
+                    "reason": item.get("reason") or "Submitted forbidden motif.",
                 }
             )
     black_hits = []
@@ -226,7 +226,7 @@ def alphabet_checks(seq: str, notes: list[str], coding: bool = True) -> list[dic
     else:
         out.append(check("length", "Length", "pass", f"{n} nt."))
     if T7_PROMOTER_RNA in seq or T7_PROMOTER_DNA in "".join(notes):
-        pass  # lists also catch this; still flag as a checker
+        pass  # leftover T7 is also scored in the motif lists
     if T7_PROMOTER_RNA in seq:
         pos = seq.find(T7_PROMOTER_RNA)
         out.append(
@@ -252,7 +252,7 @@ def coding_checks(seq: str, cds_start: int | None, cds_end: int | None, modifica
                 "cds_bounds",
                 "CDS coordinates",
                 "fail",
-                "No CDS could be resolved. Provide cds_start/cds_end or an AUG-initiated ORF.",
+                "No CDS coordinates were supplied.",
             )
         )
         return out
@@ -689,24 +689,24 @@ def list_checks(lists: dict) -> list[dict]:
     out = []
     misses = [w for w in lists["whitelist"] if not w["hit"]]
     if not lists["whitelist"]:
-        out.append(check("whitelist", "Whitelist", "skip", "No whitelist motifs were supplied."))
+        out.append(check("whitelist", "Required motifs", "skip", "No required motifs were supplied."))
     elif misses:
         motifs = ", ".join(m["motif"] for m in misses)
-        out.append(check("whitelist", "Whitelist", "fail", f"Required motif(s) missing: {motifs}."))
+        out.append(check("whitelist", "Required motifs", "fail", f"Required motif(s) missing: {motifs}."))
     else:
-        out.append(check("whitelist", "Whitelist", "pass", f"All {len(lists['whitelist'])} required motif(s) are present."))
+        out.append(check("whitelist", "Required motifs", "pass", f"All {len(lists['whitelist'])} required motif(s) are present."))
     if lists["blacklist"]:
         motifs = ", ".join(f"{h['id']}@{h['start']}" for h in lists["blacklist"])
         out.append(
             check(
                 "blacklist",
-                "Blacklist",
+                "Forbidden motifs",
                 "fail",
                 f"{len(lists['blacklist'])} forbidden motif(s): {motifs}.",
                 motifs,
             )
         )
     else:
-        src = "default and agent lists" if lists["default_blacklist"] else "agent list"
-        out.append(check("blacklist", "Blacklist", "pass", f"No hits against the {src}."))
+        src = "default leftover set" if lists["default_blacklist"] else "submitted forbidden list"
+        out.append(check("blacklist", "Forbidden motifs", "pass", f"No hits against the {src}."))
     return out

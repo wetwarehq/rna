@@ -6,7 +6,7 @@
     "host": "Homo sapiens",
     "product": "MASKGEELFTGVVPILVELDGD",
     "modifications": ["m1Psi", "m7G-cap1"],
-    "purpose": "Authorised cassette A. Every slot equals packaged auth.seq."
+    "purpose": "Cassette A. Every slot equals the packaged sequence."
   },
   "slots": {
     "5_utr": {
