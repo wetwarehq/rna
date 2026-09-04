@@ -1,0 +1,27 @@
+[project]
+name = "rna"
+version = "0.1.0"
+description = "Sequence Card verifier for synthetic RNA designed by agents."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "wetware", email = "hellowetware@gmail.com" }]
+keywords = ["RNA", "mRNA", "synthetic biology", "verifier", "sequence-card"]
+classifiers = [
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/wetwarehq/rna"
+Repository = "https://github.com/wetwarehq/rna"
+
+[project.scripts]
+rna = "rna.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
