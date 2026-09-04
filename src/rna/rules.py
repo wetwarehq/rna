@@ -642,39 +642,6 @@ def coding_checks(seq: str, cds_start: int | None, cds_end: int | None, modifica
     else:
         out.append(check("cryptic_splice", "Cryptic splice donor", "pass", "No MAG/GURAGU donor in the CDS."))
 
-    ir = inverted_repeat(seq)
-    if ir and ir["mismatches"] <= 2:
-        out.append(
-            check(
-                "inverted_repeat",
-                "5' inverted repeat",
-                "warn",
-                f"Reverse complement of the 5' 24 nt occurs at {ir['start']} with {ir['mismatches']} mismatch(es). Local dsRNA can trigger RIG-I/MDA5.",
-            )
-        )
-    else:
-        out.append(check("inverted_repeat", "5' inverted repeat", "pass", "No close reverse complement of the 5' 24 nt."))
-
-    paired5 = five_prime_paired_fraction(seq)
-    if paired5 >= 0.75:
-        out.append(
-            check(
-                "five_prime_structure",
-                "5' structure",
-                "warn",
-                f"Approximately {paired5:.0%} of the first 40 nt are paired. Strong 5' structure slows 40S scanning.",
-            )
-        )
-    else:
-        out.append(
-            check(
-                "five_prime_structure",
-                "5' structure",
-                "pass",
-                f"First 40 nt paired fraction {paired5:.0%} (Nussinov approximation).",
-            )
-        )
-
     alts = []
     if len(cds) % 3 == 0:
         for i in range(3, len(cds) - 3, 3):

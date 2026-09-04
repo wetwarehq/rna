@@ -1,0 +1,25 @@
+{
+  "claimed_id": "mini-orf-a",
+  "agent": {
+    "name": "idiot",
+    "rna_class": "mRNA",
+    "host": "Homo sapiens",
+    "product": "MASKGEELFTGVVPILVELDGD",
+    "modifications": ["m1Psi", "m7G-cap1"],
+    "purpose": "Label A, 5′ UTR is B. Kozak still GCCACCAUG. Substring whitelist would pass; identity must not."
+  },
+  "slots": {
+    "5_utr": {
+      "seq": "GAAUAACCCAAGCUUCUGCUAGCGUUUAAACUUCUGCCACC"
+    },
+    "cds": {
+      "seq": "AUGGCCAGCAAGGGCGAGGAGCUGUUCACCGGCGUGGUGCCCAUCCUGGUGGAGCUGGACGGCGACUAA"
+    },
+    "3_utr": {
+      "seq": "GCUGGCCGGCUUCCUCGCCAAUAAAGCUGGCCUUCG"
+    },
+    "polya": {
+      "seq": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    }
+  }
+}

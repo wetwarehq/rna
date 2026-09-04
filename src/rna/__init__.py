@@ -1,4 +1,4 @@
-"""RNA Lab: Sequence Card verifier for synthetic RNA."""
+"""RNA Lab: slot-and-stamp verifier for synthetic RNA."""
 
 from .verify import SCHEMA, VERSION, verify
 

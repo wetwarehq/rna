@@ -1,0 +1,25 @@
+{
+  "claimed_id": "mini-orf-a",
+  "agent": {
+    "name": "gold",
+    "rna_class": "mRNA",
+    "host": "Homo sapiens",
+    "product": "MASKGEELFTGVVPILVELDGD",
+    "modifications": ["m1Psi", "m7G-cap1"],
+    "purpose": "Authorised cassette A. Every slot equals packaged auth.seq."
+  },
+  "slots": {
+    "5_utr": {
+      "seq": "GGGAGACCCAAGCUGGCUAGCGUUUAAACUUAAGCUUGCCACC"
+    },
+    "cds": {
+      "seq": "AUGGCCAGCAAGGGCGAGGAGCUGUUCACCGGCGUGGUGCCCAUCCUGGUGGAGCUGGACGGCGACUAA"
+    },
+    "3_utr": {
+      "seq": "GCUGGCCGGCUUCCUCGCCAAUAAAGCUGGCCUUCG"
+    },
+    "polya": {
+      "seq": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    }
+  }
+}
