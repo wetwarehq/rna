@@ -108,6 +108,27 @@ class SlotStampTests(unittest.TestCase):
         self.assertIsNone(load_auth("../etc/passwd"))
         self.assertIsNone(load_auth("no-such-cassette"))
 
+    def test_empty_unnamed_fails(self):
+        card = verify({"agent": {"rna_class": "mRNA", "use_default_blacklist": False}})
+        self.assertEqual(card["stamps"]["reduction"], "fail")
+        for name in SLOT_NAMES:
+            self.assertEqual(card["stamps"][name]["reduction"], "fail")
+            statuses = {c["id"]: c["status"] for c in card["stamps"][name]["checkers"]}
+            self.assertEqual(statuses["empty"], "skip")
+        self.assertNotEqual(card["stamps"]["reduction"], "cleared")
+        self.assertNotIn("skip", [card["stamps"][n]["reduction"] for n in SLOT_NAMES])
+
+    def test_empty_named_fails(self):
+        card = verify({"claimed_id": "mini-orf-a", "slots": {}})
+        self.assertEqual(card["stamps"]["reduction"], "fail")
+        self.assertFalse(card["stamps"]["5_utr"]["identity"])
+        self.assertEqual(card["stamps"]["cds"]["reduction"], "fail")
+
+    def test_empty_string_fails(self):
+        card = verify("")
+        self.assertEqual(card["stamps"]["reduction"], "fail")
+        self.assertEqual(card["stamps"]["composition"]["length"], 0)
+
     def test_fasta_and_dna_blob(self):
         card = verify(">mini\nATG GCC TAA\n")
         self.assertIn("Slots were empty", " ".join(card["stamps"]["notes"]))

@@ -46,9 +46,9 @@ Every input receives composition and structure under `stamps`. Composition is nu
 
 ## Decision rule
 
-Per slot: `match` if a cassette was claimed and identity holds and the required grammar passes; `fail` if identity was claimed and missed, or if the required grammar fails; `cleared` if nothing was claimed and the required grammar passes.
+Per slot: `match` if a cassette was claimed and identity holds and the required grammar passes; `fail` if the slot is empty, if identity was claimed and missed, or if the required grammar fails; `cleared` if nothing was claimed, the slot has RNA, and the required grammar passes.
 
-The card is `fail` if any slot fails or a leftover motif hits; `match` if a cassette was claimed and every slot identity is true; otherwise `cleared`. Informational rows do not change it. `rn01` exits 0 on match or cleared and 2 on fail.
+The empty string is not a polymer. The card is `fail` if the polymer is empty, if a leftover motif hits, or if a submitted slot fails; `match` if a cassette was claimed and every slot identity is true; otherwise `cleared`. Informational rows do not change it. `rn01` exits 0 on match or cleared and 2 on fail.
 
 ## How to run
 

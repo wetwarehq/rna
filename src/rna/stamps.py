@@ -126,7 +126,9 @@ def _utr_cryptic(name: str, rna: str) -> list[dict]:
     return [check("cryptic_orf", "Cryptic ORF", "pass", "No cryptic ORF in the 3′ UTR.")]
 
 
-def slot_reduction(claimed: bool, identity: bool, checkers: list[dict]) -> str:
+def slot_reduction(claimed: bool, identity: bool, checkers: list[dict], rna: str) -> str:
+    if not rna:
+        return "fail"
     any_fail = any(c["status"] == "fail" for c in checkers)
     if claimed:
         if identity and not any_fail:
@@ -165,7 +167,7 @@ def stamp_slot(name: str, raw_seq: str, auth: dict[str, str] | None, claimed: bo
         checkers.append(check("identity", "Identity", "pass", f"{name} equals packaged auth.seq."))
     return {
         "identity": identity,
-        "reduction": slot_reduction(claimed, identity, checkers),
+        "reduction": slot_reduction(claimed, identity, checkers, rna),
         "length": len(rna),
         "checkers": checkers,
         "notes": notes,

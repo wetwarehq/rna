@@ -57,8 +57,8 @@ def _agent_meta(src: dict) -> dict:
     }
 
 
-def _read_slots(payload: dict, src: dict) -> tuple[dict, list[str], str]:
-    """Agent-owned slots. seq is stored as submitted. Never overwritten by stamps."""
+def _read_slots(payload: dict, src: dict) -> tuple[dict, list[str], str, bool]:
+    """Slots as submitted. Never overwritten by stamps. filled is True if any slot has seq."""
     notes: list[str] = []
     raw_slots = payload.get("slots") if isinstance(payload.get("slots"), dict) else src.get("slots")
     slots = {name: {"seq": ""} for name in SLOT_NAMES}
@@ -74,11 +74,11 @@ def _read_slots(payload: dict, src: dict) -> tuple[dict, list[str], str]:
                 slots[name] = {"seq": seq}
                 filled = filled or bool(seq)
     if filled:
-        return slots, notes, polymer_from_slots(slots)
+        return slots, notes, polymer_from_slots(slots), True
 
     blob = src.get("sequence") or src.get("seq") or payload.get("sequence") or ""
     if not blob:
-        return slots, notes, ""
+        return slots, notes, "", False
     notes.append("Slots were empty. A raw polymer was used. CDS is not inferred.")
     rna, n2, _ = normalize(blob)
     notes.extend(n2)
@@ -98,12 +98,19 @@ def _read_slots(payload: dict, src: dict) -> tuple[dict, list[str], str]:
             slots["3_utr"] = {"seq": rna[b:body_end]}
             slots["polya"] = {"seq": rna[body_end:]}
             notes.append("Polymer sliced with caller-supplied CDS bounds. No ORF search.")
-            return slots, notes, polymer_from_slots(slots)
-    return slots, notes, rna
+            return slots, notes, polymer_from_slots(slots), True
+    return slots, notes, rna, False
 
 
-def _card_reduction(slot_stamps: dict, extra_fail: bool, claimed: bool) -> str:
-    if extra_fail or any(slot_stamps[n]["reduction"] == "fail" for n in SLOT_NAMES):
+def _card_reduction(slot_stamps: dict, extra_fail: bool, claimed: bool, polymer: str, slots_filled: bool) -> str:
+    if not polymer:
+        return "fail"
+    if extra_fail:
+        return "fail"
+    if slots_filled:
+        if any(slot_stamps[n]["reduction"] == "fail" for n in SLOT_NAMES):
+            return "fail"
+    elif claimed and not all(slot_stamps[n]["identity"] for n in SLOT_NAMES):
         return "fail"
     if claimed and all(slot_stamps[n]["identity"] for n in SLOT_NAMES):
         return "match"
@@ -121,7 +128,7 @@ def verify(payload: dict | str) -> dict:
     claimed_id = payload.get("claimed_id") or src.get("claimed_id") or None
     if claimed_id == "":
         claimed_id = None
-    slots, notes, polymer = _read_slots(payload, src)
+    slots, notes, polymer, slots_filled = _read_slots(payload, src)
     auth = load_auth(claimed_id)
     claimed = bool(claimed_id)
 
@@ -169,7 +176,7 @@ def verify(payload: dict | str) -> dict:
     alpha = alphabet_checks(polymer, notes, coding) if polymer else []
     heuristics.extend(c for c in alpha if c["status"] in {"warn", "info"})
 
-    reduction = _card_reduction(slot_stamps, extra_fail, claimed)
+    reduction = _card_reduction(slot_stamps, extra_fail, claimed, polymer, slots_filled)
     stamps = {
         **slot_stamps,
         "reduction": reduction,
